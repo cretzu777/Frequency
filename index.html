@@ -2,7 +2,7 @@
 <html lang="ro">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Generator Stereo & Binaural</title>
+<title>Generator Frecventa</title>
 <style>
 *{box-sizing:border-box;font-family:-apple-system,sans-serif}body{margin:0;padding:8px;background:#0b1120;color:#f8fafc;display:flex;justify-content:center}
 .box{width:100%;max-width:460px;background:#1e293b;border-radius:16px;padding:12px}h1{font-size:1.1rem;text-align:center;margin:0 0 8px}
@@ -99,7 +99,7 @@ input[type=range]{width:100%;margin:5px 0;accent-color:#38bdf8}.chR input[type=r
 </div>
 </div>
 <button type="button" class="play" id="pb" onclick="tg()">PORNEȘTE AUDIO STEREO</button>
-<div id="st">Stare audio: Oprit • v9</div>
+<div id="st">Stare audio: Oprit • v10</div>
 </div>
 <script>
 const MODES={none:{off:null,base:null},equal:{off:0,base:null},delta:{off:2,base:120},theta:{off:6,base:150},alpha:{off:10,base:200},beta:{off:20,base:260},gamma:{off:40,base:320}};
@@ -120,8 +120,9 @@ function setTm(m,btn){tmMin=Math.max(0,Math.min(240,parseInt(m)||0));remSec=tmMi
 function up(s){if(s!=='L')inL.value=fL;slL.value=fL;if(s!=='R')inR.value=fR;slR.value=fR;df.textContent='Diferență: '+Math.round(Math.abs(fL-fR)*10)/10+' Hz';if(on&&ctx){oL.frequency.value=fL;oR.frequency.value=fR}}
 function sw(t,b){wv=t;document.querySelectorAll('.w').forEach(x=>x.classList.remove('on'));b.classList.add('on');if(oL)oL.type=oR.type=t}
 function sv(v){baseVol=parseFloat(v);vd.textContent=Math.round(baseVol)+'%';if(g)g.gain.value=baseVol/100}
-function stopAudio(){if(oL){try{oL.stop();}catch(e){}}if(oR){try{oR.stop();}catch(e){}}if(el)el.pause();clearInterval(tmTimer);on=0;pb.textContent='PORNEȘTE AUDIO STEREO';pb.classList.remove('stop');document.getElementById('st').textContent='Stare audio: Oprit • v9';sv(baseVol);vs.value=baseVol;if(tmMin>0){remSec=tmMin*60;document.getElementById('tmLbl').textContent=fmt(remSec);}}
-function tg(){if(!on){try{if(!el){el=document.createElement('audio');el.setAttribute('playsinline','');el.loop=true;el.src='data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';}el.play().catch(()=>{});}catch(e){}const AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state!=='running')ctx.resume();oL=ctx.createOscillator();oR=ctx.createOscillator();let pL=ctx.createStereoPanner(),pR=ctx.createStereoPanner();g=ctx.createGain();oL.type=oR.type=wv;oL.frequency.value=fL;oR.frequency.value=fR;pL.pan.value=-1;pR.pan.value=1;baseVol=parseFloat(vs.value);g.gain.value=baseVol/100;oL.connect(pL);oR.connect(pR);pL.connect(g);pR.connect(g);g.connect(ctx.destination);oL.start(0);oR.start(0);on=1;pb.textContent='OPREȘTE AUDIO';pb.classList.add('stop');document.getElementById('st').textContent='Stare audio: '+ctx.state+' • v9';if(tmMin>0){remSec=tmMin*60;let fadeWin=Math.min(120,remSec);tmTimer=setInterval(()=>{remSec--;if(remSec<=0){stopAudio();return;}document.getElementById('tmLbl').textContent=fmt(remSec);if(remSec<=fadeWin&&g){let cur=baseVol*(remSec/fadeWin);g.gain.value=cur/100;vd.textContent=Math.round(cur)+'%';}},1000);}}else{stopAudio();}}
+function stopAudio(){if(oL){try{oL.stop();}catch(e){}}if(oR){try{oR.stop();}catch(e){}}if(el){el.pause();el.srcObject=null;}clearInterval(tmTimer);on=0;pb.textContent='PORNEȘTE AUDIO STEREO';pb.classList.remove('stop');document.getElementById('st').textContent='Stare audio: Oprit • v10';sv(baseVol);vs.value=baseVol;if(tmMin>0){remSec=tmMin*60;document.getElementById('tmLbl').textContent=fmt(remSec);}}
+function tg(){if(!on){const AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state!=='running')ctx.resume();oL=ctx.createOscillator();oR=ctx.createOscillator();let pL=ctx.createStereoPanner(),pR=ctx.createStereoPanner();g=ctx.createGain();oL.type=oR.type=wv;oL.frequency.value=fL;oR.frequency.value=fR;pL.pan.value=-1;pR.pan.value=1;baseVol=parseFloat(vs.value);g.gain.value=baseVol/100;oL.connect(pL);oR.connect(pR);pL.connect(g);pR.connect(g);if(ctx.createMediaStreamDestination){let dest=ctx.createMediaStreamDestination();g.connect(dest);if(!el){el=document.createElement('audio');el.setAttribute('playsinline','');}el.srcObject=dest.stream;el.play().catch(()=>{g.connect(ctx.destination);});}else{g.connect(ctx.destination);}if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:'Generator Stereo & Binaural',artist:'Frecvențe Audio'});navigator.mediaSession.setActionHandler('pause',stopAudio);navigator.mediaSession.setActionHandler('stop',stopAudio);}oL.start(0);oR.start(0);on=1;pb.textContent='OPREȘTE AUDIO';pb.classList.add('stop');document.getElementById('st').textContent='Stare audio: '+ctx.state+' • v10';if(tmMin>0){remSec=tmMin*60;let fadeWin=Math.min(120,remSec);tmTimer=setInterval(()=>{remSec--;if(remSec<=0){stopAudio();return;}document.getElementById('tmLbl').textContent=fmt(remSec);if(remSec<=fadeWin&&g){let cur=baseVol*(remSec/fadeWin);g.gain.value=cur/100;vd.textContent=Math.round(cur)+'%';}},1000);}}else{stopAudio();}}
+document.addEventListener('visibilitychange',()=>{if(on&&ctx&&ctx.state!=='running')ctx.resume();});
 </script>
 </body>
 </html>
