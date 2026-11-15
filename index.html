@@ -62,13 +62,13 @@ input[type=range]{width:100%;margin:5px 0;accent-color:#38bdf8}.chR input[type=r
 </div>
 </div>
 <div class="card chL">
-<div class="row"><b style="color:#38bdf8">STÂNGA (L)</b><div><input type="number" id="inL" min="0" max="10000" step="0.1" value="200" oninput="setL(this.value,true)"> Hz</div></div>
-<input type="range" id="slL" min="0" max="10000" value="200" oninput="setL(this.value,false)">
+<div class="row"><b style="color:#38bdf8">STÂNGA (L)</b><div><input type="number" id="inL" min="0" max="20000" step="0.1" value="200" oninput="setL(this.value,true)"> Hz</div></div>
+<input type="range" id="slL" min="0" max="20000" value="200" oninput="setL(this.value,false)">
 <div class="btns"><button type="button" onclick="setL(fL-10,false)">-10</button><button type="button" onclick="setL(fL-1,false)">-1</button><button type="button" onclick="setL(fL-0.1,false)">-.1</button><button type="button" onclick="setL(fL+0.1,false)">+.1</button><button type="button" onclick="setL(fL+1,false)">+1</button><button type="button" onclick="setL(fL+10,false)">+10</button></div>
 </div>
 <div class="card chR">
-<div class="row"><b style="color:#a855f7">DREAPTA (R)</b><div><input type="number" id="inR" min="0" max="10000" step="0.1" value="200" oninput="setR(this.value,true)"> Hz</div></div>
-<input type="range" id="slR" min="0" max="10000" value="200" oninput="setR(this.value,false)">
+<div class="row"><b style="color:#a855f7">DREAPTA (R)</b><div><input type="number" id="inR" min="0" max="20000" step="0.1" value="200" oninput="setR(this.value,true)"> Hz</div></div>
+<input type="range" id="slR" min="0" max="20000" value="200" oninput="setR(this.value,false)">
 <div class="btns"><button type="button" onclick="setR(fR-10,false)">-10</button><button type="button" onclick="setR(fR-1,false)">-1</button><button type="button" onclick="setR(fR-0.1,false)">-.1</button><button type="button" onclick="setR(fR+0.1,false)">+.1</button><button type="button" onclick="setR(fR+1,false)">+1</button><button type="button" onclick="setR(fR+10,false)">+10</button></div>
 </div>
 <div class="card">
@@ -77,7 +77,7 @@ input[type=range]{width:100%;margin:5px 0;accent-color:#38bdf8}.chR input[type=r
 <input type="range" id="vs" min="0" max="100" value="50" style="margin:2px 0" oninput="sv(this.value)">
 </div>
 <button type="button" class="play" id="pb" onclick="tg()">PORNEȘTE AUDIO STEREO</button>
-<div id="st">Stare audio: Oprit • v6</div>
+<div id="st">Stare audio: Oprit • v7</div>
 </div>
 <script>
 const MODES={none:{off:null,base:null},equal:{off:0,base:null},delta:{off:2,base:120},theta:{off:6,base:150},alpha:{off:10,base:200},beta:{off:20,base:260},gamma:{off:40,base:320}};
@@ -95,7 +95,7 @@ function toggleSwap(){swapOn=!swapOn;const btn=document.getElementById('swBtn'),
 function up(s){if(s!=='L')inL.value=fL;slL.value=fL;if(s!=='R')inR.value=fR;slR.value=fR;df.textContent='Diferență: '+Math.round(Math.abs(fL-fR)*10)/10+' Hz';if(on&&ctx){oL.frequency.value=fL;oR.frequency.value=fR}}
 function sw(t,b){wv=t;document.querySelectorAll('.w').forEach(x=>x.classList.remove('on'));b.classList.add('on');if(oL)oL.type=oR.type=t}
 function sv(v){vd.textContent=v+'%';if(g)g.gain.value=v/100}
-function tg(){if(!on){try{if(!el){el=document.createElement('audio');el.setAttribute('playsinline','');el.loop=true;el.src='data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';}el.play().catch(()=>{});}catch(e){}const AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state!=='running')ctx.resume();oL=ctx.createOscillator();oR=ctx.createOscillator();let pL=ctx.createStereoPanner(),pR=ctx.createStereoPanner();g=ctx.createGain();oL.type=oR.type=wv;oL.frequency.value=fL;oR.frequency.value=fR;pL.pan.value=-1;pR.pan.value=1;g.gain.value=vs.value/100;oL.connect(pL);oR.connect(pR);pL.connect(g);pR.connect(g);g.connect(ctx.destination);oL.start(0);oR.start(0);on=1;pb.textContent='OPREȘTE AUDIO';pb.classList.add('stop');document.getElementById('st').textContent='Stare audio: '+ctx.state+' • v6';}else{oL.stop();oR.stop();if(el)el.pause();on=0;pb.textContent='PORNEȘTE AUDIO STEREO';pb.classList.remove('stop');document.getElementById('st').textContent='Stare audio: Oprit • v6';}}
+function tg(){if(!on){try{if(!el){el=document.createElement('audio');el.setAttribute('playsinline','');el.loop=true;el.src='data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';}el.play().catch(()=>{});}catch(e){}const AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state!=='running')ctx.resume();oL=ctx.createOscillator();oR=ctx.createOscillator();let pL=ctx.createStereoPanner(),pR=ctx.createStereoPanner();g=ctx.createGain();oL.type=oR.type=wv;oL.frequency.value=fL;oR.frequency.value=fR;pL.pan.value=-1;pR.pan.value=1;g.gain.value=vs.value/100;oL.connect(pL);oR.connect(pR);pL.connect(g);pR.connect(g);g.connect(ctx.destination);oL.start(0);oR.start(0);on=1;pb.textContent='OPREȘTE AUDIO';pb.classList.add('stop');document.getElementById('st').textContent='Stare audio: '+ctx.state+' • v7';}else{oL.stop();oR.stop();if(el)el.pause();on=0;pb.textContent='PORNEȘTE AUDIO STEREO';pb.classList.remove('stop');document.getElementById('st').textContent='Stare audio: Oprit • v7';}}
 </script>
 </body>
 </html>
